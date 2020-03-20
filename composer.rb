@@ -93,7 +93,7 @@ module Gemfile
 end
 def add_gem(*all) Gemfile.add(*all); end
 
-@recipes = ["core", "git", "railsapps", "learn_rails", "rails_bootstrap", "rails_foundation", "rails_omniauth", "rails_devise", "rails_devise_roles", "rails_devise_pundit", "rails_signup_download", "rails_mailinglist_activejob", "rails_stripe_checkout", "rails_stripe_coupons", "rails_stripe_membership_saas", "setup", "locale", "readme", "gems", "tests", "email", "devise", "omniauth", "roles", "frontend", "pages", "init", "analytics", "deployment", "extras"]
+@recipes = ["core", "git", "railsapps", "learn_rails", "rails_bootstrap", "rails_foundation", "rails_omniauth", "rails_devise", "rails_devise_roles", "rails_devise_pundit", "rails_shortcut_app", "rails_signup_download", "rails_signup_thankyou", "rails_mailinglist_activejob", "rails_stripe_checkout", "rails_stripe_coupons", "rails_stripe_membership_saas", "setup", "locale", "readme", "gems", "tests", "email", "devise", "omniauth", "roles", "frontend", "pages", "init", "analytics", "deployment", "extras"]
 @prefs = {}
 @gems = []
 @diagnostics_recipes = [["example"], ["setup"], ["railsapps"], ["gems", "setup"], ["gems", "readme", "setup"], ["extras", "gems", "readme", "setup"], ["example", "git"], ["git", "setup"], ["git", "railsapps"], ["gems", "git", "setup"], ["gems", "git", "readme", "setup"], ["extras", "gems", "git", "readme", "setup"], ["email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["email", "example", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["email", "example", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["email", "example", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["apps4", "core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["apps4", "core", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "tests"], ["apps4", "core", "deployment", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "testing"], ["apps4", "core", "deployment", "email", "extras", "frontend", "gems", "git", "init", "railsapps", "readme", "setup", "tests"], ["apps4", "core", "deployment", "devise", "email", "extras", "frontend", "gems", "git", "init", "omniauth", "pundit", "railsapps", "readme", "setup", "tests"]]
@@ -252,9 +252,6 @@ say_wizard("\033[1m\033[36m" + "|_|  \\_\\__,_|_|_|___/_/    \\_\\ .__/| .__/|__
 say_wizard("\033[1m\033[36m" + "                             \| \|   \| \|" + "\033[0m")
 say_wizard("\033[1m\033[36m" + "                             \| \|   \| \|" + "\033[0m")
 say_wizard("\033[1m\033[36m" + '' + "\033[0m")
-say_wizard("\033[1m\033[36m" + "Support the KICKSTARTER for Rails Composer" + "\033[0m")
-say_wizard("\033[1m\033[36m" + "please act before June 4, 2017" + "\033[0m")
-say_wizard("\033[1m\033[36m" + "https://www.kickstarter.com/projects/909377477/rails-composer-for-rails-51" + "\033[0m")
 say_wizard("Need help? Ask on Stack Overflow with the tag \'railsapps.\'")
 say_wizard("Your new application will contain diagnostics in its README file.")
 
@@ -361,7 +358,7 @@ case Rails::VERSION::MAJOR.to_s
 when "5"
   prefs[:apps4] = multiple_choice "Build a starter application?",
     [["Build a RailsApps example application", "railsapps"],
-    ["Contributed applications (none available)", "contributed_app"],
+    ["Contributed applications", "contributed_app"],
     ["Custom application (experimental)", "none"]] unless prefs.has_key? :apps4
   case prefs[:apps4]
     when 'railsapps'
@@ -376,11 +373,11 @@ when "5"
         ["rails-devise-pundit", "rails-devise-pundit"],
         ["rails-signup-download", "rails-signup-download"],
         ["rails-stripe-checkout", "rails-stripe-checkout"],
-        ["rails-stripe-coupons", "rails-stripe-coupons"],
-        ["rails-stripe-membership-saas", "rails-stripe-membership-saas"]]
+        ["rails-stripe-coupons", "rails-stripe-coupons"]]
     when 'contributed_app'
-      prefs[:apps4] = multiple_choice "No contributed applications are available.",
-        [["create custom application", "railsapps"]]
+      prefs[:apps4] = multiple_choice "Choose a starter application.",
+        [["rails-shortcut-app", "rails-shortcut-app"],
+        ["rails-signup-thankyou", "rails-signup-thankyou"]]
   end
 when "3"
   say_wizard "Please upgrade to Rails 4.1 or newer."
@@ -723,6 +720,50 @@ end
 # >-------------------------- templates/recipe.erb ---------------------------end<
 
 # >-------------------------- templates/recipe.erb ---------------------------start<
+# >--------------------------[ rails_shortcut_app ]---------------------------<
+@current_recipe = "rails_shortcut_app"
+@before_configs["rails_shortcut_app"].call if @before_configs["rails_shortcut_app"]
+say_recipe 'rails_shortcut_app'
+@configs[@current_recipe] = config
+# >---------------------- recipes/rails_shortcut_app.rb ----------------------start<
+
+# Application template recipe for the rails_apps_composer. Change the recipe here:
+# https://github.com/RailsApps/rails_apps_composer/blob/master/recipes/rails_shortcut_app.rb
+
+if prefer :apps4, 'rails-shortcut-app'
+  prefs[:authentication] = 'devise'
+  prefs[:authorization] = 'roles'
+  prefs[:dashboard] = 'none'
+  prefs[:ban_spiders] = false
+  prefs[:better_errors] = true
+  prefs[:database] = 'sqlite'
+  prefs[:deployment] = 'none'
+  prefs[:devise_modules] = false
+  prefs[:dev_webserver] = 'puma'
+  prefs[:email] = 'none'
+  prefs[:frontend] = 'bootstrap3'
+  prefs[:layouts] = 'none'
+  prefs[:pages] = 'none'
+  prefs[:github] = false
+  prefs[:git] = true
+  prefs[:local_env_file] = false
+  prefs[:prod_webserver] = 'same'
+  prefs[:pry] = false
+  prefs[:pages] = 'about+users'
+  prefs[:templates] = 'erb'
+  prefs[:tests] = 'none'
+  prefs[:locale] = 'none'
+  prefs[:analytics] = 'none'
+  prefs[:rubocop] = false
+  prefs[:disable_turbolinks] = true
+  prefs[:rvmrc] = true
+  prefs[:form_builder] = false
+  prefs[:jquery] = 'gem'
+end
+# >---------------------- recipes/rails_shortcut_app.rb ----------------------end<
+# >-------------------------- templates/recipe.erb ---------------------------end<
+
+# >-------------------------- templates/recipe.erb ---------------------------start<
 # >-------------------------[ rails_signup_download ]-------------------------<
 @current_recipe = "rails_signup_download"
 @before_configs["rails_signup_download"].call if @before_configs["rails_signup_download"]
@@ -790,6 +831,82 @@ if prefer :apps4, 'rails-signup-download'
   end
 end
 # >-------------------- recipes/rails_signup_download.rb ---------------------end<
+# >-------------------------- templates/recipe.erb ---------------------------end<
+
+# >-------------------------- templates/recipe.erb ---------------------------start<
+# >-------------------------[ rails_signup_thankyou ]-------------------------<
+@current_recipe = "rails_signup_thankyou"
+@before_configs["rails_signup_thankyou"].call if @before_configs["rails_signup_thankyou"]
+say_recipe 'rails_signup_thankyou'
+@configs[@current_recipe] = config
+# >-------------------- recipes/rails_signup_thankyou.rb ---------------------start<
+
+# Application template recipe for the rails_apps_composer. Change the recipe here:
+# https://github.com/RailsApps/rails_apps_composer/blob/master/recipes/rails_signup_thankyou.rb
+
+if prefer :apps4, 'rails-signup-thankyou'
+  prefs[:authentication] = 'devise'
+  prefs[:authorization] = 'roles'
+  prefs[:dashboard] = 'none'
+  prefs[:ban_spiders] = false
+  prefs[:better_errors] = true
+  prefs[:database] = 'sqlite'
+  prefs[:deployment] = 'none'
+  prefs[:devise_modules] = false
+  prefs[:dev_webserver] = 'puma'
+  prefs[:email] = 'none'
+  prefs[:frontend] = 'bootstrap3'
+  prefs[:layouts] = 'none'
+  prefs[:pages] = 'none'
+  prefs[:github] = false
+  prefs[:git] = true
+  prefs[:local_env_file] = false
+  prefs[:prod_webserver] = 'same'
+  prefs[:pry] = false
+  prefs[:pages] = 'about+users'
+  prefs[:templates] = 'erb'
+  prefs[:tests] = 'none'
+  prefs[:locale] = 'none'
+  prefs[:analytics] = 'none'
+  prefs[:rubocop] = false
+  prefs[:disable_turbolinks] = true
+  prefs[:rvmrc] = true
+  prefs[:form_builder] = false
+  prefs[:jquery] = 'gem'
+
+  stage_three do
+    say_wizard "recipe stage three"
+    repo = 'https://raw.github.com/RailsApps/rails-signup-thankyou/master/'
+
+    # >-------------------------------[ Models ]--------------------------------<
+
+    copy_from_repo 'app/models/user.rb', :repo => repo
+
+    # >-------------------------------[ Controllers ]--------------------------------<
+
+    copy_from_repo 'app/controllers/application_controller.rb', :repo => repo
+    copy_from_repo 'app/controllers/visitors_controller.rb', :repo => repo
+    copy_from_repo 'app/controllers/products_controller.rb', :repo => repo
+    copy_from_repo 'app/controllers/thank_you_controller.rb', :repo => repo
+
+    # >-------------------------------[ Views ]--------------------------------<
+
+    copy_from_repo 'app/views/visitors/index.html.erb', :repo => repo
+    copy_from_repo 'app/views/products/product.pdf', :repo => repo
+    copy_from_repo 'app/views/thank_you/index.html.erb', :repo => repo
+
+    # >-------------------------------[ Routes ]--------------------------------<
+
+    copy_from_repo 'config/routes.rb', :repo => repo
+
+    # >-------------------------------[ Tests ]--------------------------------<
+
+    copy_from_repo 'spec/features/users/product_acquisition_spec.rb', :repo => repo
+    copy_from_repo 'spec/controllers/products_controller_spec.rb', :repo => repo
+
+  end
+end
+# >-------------------- recipes/rails_signup_thankyou.rb ---------------------end<
 # >-------------------------- templates/recipe.erb ---------------------------end<
 
 # >-------------------------- templates/recipe.erb ---------------------------start<
@@ -1297,7 +1414,7 @@ end
 ## Form Builder
 ## (no simple_form for Bootstrap 4 yet)
 unless prefs[:frontend] == 'bootstrap4'
-  prefs[:form_builder] = multiple_choice "Use a form builder gem?", [["None", "none"], ["SimpleForm (incompatible with Rails 5.1)", "simple_form"]] unless prefs.has_key? :form_builder
+  prefs[:form_builder] = multiple_choice "Use a form builder gem?", [["None", "none"], ["SimpleForm", "simple_form"]] unless prefs.has_key? :form_builder
 end
 
 ## Pages
@@ -1628,10 +1745,19 @@ end
 ## Database Adapter
 gsub_file 'Gemfile', /gem 'sqlite3'\n/, '' unless prefer :database, 'sqlite'
 gsub_file 'Gemfile', /gem 'pg'.*/, ''
-add_gem 'pg' if prefer :database, 'postgresql'
+if prefer :database, 'postgresql'
+  if Rails::VERSION::MAJOR < 5
+    add_gem 'pg', '~> 0.18'
+  else
+    if Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR <= 1 && Rails::VERSION::MINOR <= 5
+      add_gem 'pg', '~> 0.18'
+    else
+      add_gem 'pg'
+    end
+  end
+end
 gsub_file 'Gemfile', /gem 'mysql2'.*/, ''
 add_gem 'mysql2', '~> 0.3.18' if prefer :database, 'mysql'
-
 ## Gem to set up controllers, views, and routing in the 'apps4' recipe
 add_gem 'rails_apps_pages', :group => :development if prefs[:apps4]
 
@@ -1651,7 +1777,7 @@ if prefer :tests, 'rspec'
   add_gem 'rails_apps_testing', :group => :development
   add_gem 'rspec-rails', :group => [:development, :test]
   add_gem 'spring-commands-rspec', :group => :development
-  add_gem 'factory_girl_rails', :group => [:development, :test]
+  add_gem 'factory_bot_rails', :group => [:development, :test]
   add_gem 'faker', :group => [:development, :test]
   unless Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR >= 1
     add_gem 'capybara', :group => :test
@@ -1677,7 +1803,7 @@ case prefs[:frontend]
   when 'bootstrap3'
     add_gem 'bootstrap-sass'
   when 'bootstrap4'
-    add_gem 'bootstrap', '~> 4.0.0.alpha6'
+    add_gem 'bootstrap', '~> 4.0.0'
   when 'foundation4'
     add_gem 'zurb-foundation', '~> 4.3.2'
     add_gem 'compass-rails', '~> 1.1.2'
@@ -2255,6 +2381,8 @@ say_recipe 'init'
 
 stage_three do
   say_wizard "recipe stage three"
+  copy_from_repo 'config/secrets.yml' if Rails::VERSION::MAJOR == 5 && Rails::VERSION::MINOR >= 2
+  copy_from_repo 'config/secrets.yml' if Rails::VERSION::MAJOR >= 6
   if (!prefs[:secrets].nil?)
     prefs[:secrets].each do |secret|
       env_var = "  #{secret}: <%= ENV[\"#{secret.upcase}\"] %>"
@@ -2364,7 +2492,7 @@ FILE
   end
   ## DEVISE-CONFIRMABLE
   if (prefer :devise_modules, 'confirmable') || (prefer :devise_modules, 'invitable')
-    inject_into_file 'app/services/create_admin_service.rb', "        user.confirm!\n", :after => "user.password_confirmation = Rails.application.secrets.admin_password\n"
+    inject_into_file 'app/services/create_admin_service.rb', "        user.confirm\n", :after => "user.password_confirmation = Rails.application.secrets.admin_password\n"
   end
   ## DEVISE-INVITABLE
   if prefer :devise_modules, 'invitable'
@@ -2602,14 +2730,18 @@ if prefs[:disable_turbolinks]
   stage_two do
     say_wizard "recipe stage two"
     gsub_file 'Gemfile', /gem 'turbolinks'\n/, ''
+    gsub_file 'Gemfile', /gem 'turbolinks', '~> 5'\n/, ''
     gsub_file 'app/assets/javascripts/application.js', "//= require turbolinks\n", ''
     case prefs[:templates]
       when 'erb'
         gsub_file 'app/views/layouts/application.html.erb', /, 'data-turbolinks-track' => true/, ''
+        gsub_file 'app/views/layouts/application.html.erb', /, 'data-turbolinks-track' => 'reload'/, ''
       when 'haml'
         gsub_file 'app/views/layouts/application.html.haml', /, 'data-turbolinks-track' => true/, ''
+        gsub_file 'app/views/layouts/application.html.haml', /, 'data-turbolinks-track' => 'reload'/, ''
       when 'slim'
         gsub_file 'app/views/layouts/application.html.slim', /, 'data-turbolinks-track' => true/, ''
+        gsub_file 'app/views/layouts/application.html.slim', /, 'data-turbolinks-track' => 'reload'/, ''
     end
   end
 end
